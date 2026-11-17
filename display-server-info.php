@@ -6,7 +6,7 @@ use Random\RandomException;
  * Plugin Name: Display Server Info
  * Description: This plugin including PHP, MySQL, server software,and OS details in the WordPress admin dashboard.It also provides options to show the information in the admin bar and footer.
  *
- * Version: 2.2.0
+ * Version: 2.2.1
  * Author: RobertWP
  * Author URI: https://robertwp.com
  * License: GPLv3 or later
@@ -21,7 +21,7 @@ if ( !defined('ABSPATH') ) {
 
 class DisplayServerInfo {
 
-    const VERSION = '2.2.0';
+    const VERSION = '2.2.1';
     private string $plugin_url;
 
     private string $apiBaseUrl = 'https://api.robertwp.com/api';

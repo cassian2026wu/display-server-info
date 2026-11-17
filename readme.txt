@@ -3,9 +3,9 @@ Contributors: robert2021south
 Tags: server info, php info, dashboard widget, system info, shortcode
 Donate link: http://ko-fi.com/robertsouth
 Requires at least: 5.6
-Tested up to: 6.9
+Tested up to: 7.1
 Requires PHP: 7.2
-Stable tag: 2.2.0
+Stable tag: 2.2.1
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
