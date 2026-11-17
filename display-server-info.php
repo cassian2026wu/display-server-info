@@ -230,21 +230,45 @@ class DisplayServerInfo {
         wp_die();
     }
 
-    public function add_shortcode()
+    public function add_shortcode($atts = []): string
     {
-        if (get_option('disi_shortcode_enable', '0') === '1') {
-
-            $server_info = $this->get_server_info();
-
-            $output = '<ul>';
-            foreach ($server_info as $arr) {
-                $output .= "<li><strong>{$arr['text']}:</strong> {$arr['value']}</li>";
-            }
-            $output .= '</ul>';
-
-            return $output;
-
+        if (get_option('disi_shortcode_enable', '0') !== '1') {
+            return '';
         }
+
+        // On the frontend, only the most harmless items are shown by default; server_ip / server_hostname are excluded by default
+        $atts = shortcode_atts([
+            'show' => 'php_version,mysql_version,server_software,operating_system',
+        ], $atts, 'disi_server_info');
+
+        // Whitelist of fields allowed to be displayed via shortcode (note: intentionally excludes server_ip, server_hostname)
+        $allowed = [
+            'php_version',
+            'mysql_version',
+            'server_software',
+            'operating_system',
+        ];
+
+        $requested = array_filter(array_map('trim', explode(',', $atts['show'])));
+        $requested = array_intersect($requested, $allowed);
+
+        if (empty($requested)) {
+            return '';
+        }
+
+        $server_info = $this->get_server_info();
+
+        $output = '<ul class="disi-server-info-shortcode">';
+        foreach ($requested as $key) {
+            if (!isset($server_info[$key])) {
+                continue;
+            }
+            $output .= '<li><strong>' . esc_html($server_info[$key]['text']) . ':</strong> '
+                . esc_html($server_info[$key]['value']) . '</li>';
+        }
+        $output .= '</ul>';
+
+        return $output;
     }
 
     public function phpinfo_ajax_handler(): void
