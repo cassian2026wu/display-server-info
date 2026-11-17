@@ -3,9 +3,9 @@ Contributors: robert2021south
 Tags: server info, php info, dashboard widget, system info, shortcode
 Donate link: http://ko-fi.com/robertsouth
 Requires at least: 5.6
-Tested up to: 6.9
+Tested up to: 7.1
 Requires PHP: 7.2
-Stable tag: 2.2.0
+Stable tag: 2.2.1
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -47,7 +47,7 @@ The settings menu includes a "Display Server Info" submenu with two tabs:
 
 2. Settings Tab:
    Configure plugin behavior with four toggle switches to enable or disable server information display in the dashboard, admin bar, and footer.
-   Additionally, users can activate shortcode functionality, allowing `[disi_server_info]` to display server information anywhere in posts or pages.
+      Additionally, users can activate shortcode functionality, allowing `[disi_server_info]` to display server information anywhere in posts or pages. The shortcode supports a `show` attribute to control exactly which fields are output, e.g. `[disi_server_info show="php_version,mysql_version"]`. For security, only the following fields are available to the shortcode: PHP Version, MySQL Version, Server Software, and Operating System. Sensitive fields such as Server IP and Server Hostname are never exposed through the shortcode.
 
 The plugin is fully translated into 7 international languages, making it accessible for a global audience.
 
@@ -78,7 +78,16 @@ Yes. All plugin options are removed during uninstall to keep your database clean
 Yes. The plugin is tested with the latest WordPress releases and maintained with ongoing updates.
 
 = Can I display server information on the frontend? =
-Yes. Use the shortcode <code data-start="1463" data-end="1483">[disi_server_info]</code> to display server details anywhere on your site.
+Yes. Use the shortcode [disi_server_info] to display server details anywhere on your site.
+
+The shortcode accepts an optional `show` attribute to limit which fields are displayed. Only non-sensitive fields can be shown: php_version, mysql_version, server_software, operating_system.
+
+Examples:
+* [disi_server_info] — shows PHP Version, MySQL Version, Server Software and Operating System.
+* [disi_server_info show="php_version"] — shows only the PHP version.
+* [disi_server_info show="php_version,mysql_version"] — shows PHP and MySQL versions.
+
+Sensitive information such as Server IP and Server Hostname is intentionally excluded and cannot be requested via the shortcode.
 
 == Installation ==
 
@@ -125,6 +134,11 @@ The following files are minified in the plugin package:
 7. Shortcode Use Case
 
 == Changelog ==
+
+= 2.2.1 =
+* Security: Shortcode no longer exposes server IP address and hostname
+* Added `show` attribute to the [disi_server_info] shortcode to control which fields are displayed (whitelist-based)
+* Shortcode output is now escaped
 
 = 2.2.0 =
 * Added feedback form in settings page

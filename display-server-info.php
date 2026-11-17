@@ -3,7 +3,7 @@
  * Plugin Name: Display Server Info
  * Description: This plugin including PHP, MySQL, server software,and OS details in the WordPress admin dashboard.It also provides options to show the information in the admin bar and footer.
  *
- * Version: 2.2.0
+ * Version: 2.2.1
  * Author: RobertWP
  * Author URI: https://robertwp.com
  * License: GPLv3 or later
@@ -21,7 +21,7 @@ if ( !defined('ABSPATH') ) {
 
 class DisplayServerInfo {
 
-    const VERSION = '2.2.0';
+    const VERSION = '2.2.1';
     private string $plugin_url;
 
     private string $apiBaseUrl = 'https://api.robertwp.com/api';
@@ -229,21 +229,45 @@ class DisplayServerInfo {
         wp_die();
     }
 
-    public function add_shortcode()
+    public function add_shortcode($atts = []): string
     {
-        if (get_option('disi_shortcode_enable', '0') === '1') {
-
-            $server_info = $this->get_server_info();
-
-            $output = '<ul>';
-            foreach ($server_info as $arr) {
-                $output .= "<li><strong>{$arr['text']}:</strong> {$arr['value']}</li>";
-            }
-            $output .= '</ul>';
-
-            return $output;
-
+        if (get_option('disi_shortcode_enable', '0') !== '1') {
+            return '';
         }
+
+        // On the frontend, only the most harmless items are shown by default; server_ip / server_hostname are excluded by default
+        $atts = shortcode_atts([
+            'show' => 'php_version,mysql_version,server_software,operating_system',
+        ], $atts, 'disi_server_info');
+
+        // Whitelist of fields allowed to be displayed via shortcode (note: intentionally excludes server_ip, server_hostname)
+        $allowed = [
+            'php_version',
+            'mysql_version',
+            'server_software',
+            'operating_system',
+        ];
+
+        $requested = array_filter(array_map('trim', explode(',', $atts['show'])));
+        $requested = array_intersect($requested, $allowed);
+
+        if (empty($requested)) {
+            return '';
+        }
+
+        $server_info = $this->get_server_info();
+
+        $output = '<ul class="disi-server-info-shortcode">';
+        foreach ($requested as $key) {
+            if (!isset($server_info[$key])) {
+                continue;
+            }
+            $output .= '<li><strong>' . esc_html($server_info[$key]['text']) . ':</strong> '
+                . esc_html($server_info[$key]['value']) . '</li>';
+        }
+        $output .= '</ul>';
+
+        return $output;
     }
 
     public function phpinfo_ajax_handler(): void
